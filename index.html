@@ -1,0 +1,195 @@
+ <!DOCTYPE html>
+              <html>
+              <head>
+                  <title>game</title>
+              </head>
+              <body>
+                  <canvas id="canvas" width="400" height="400"></canvas>
+                  <h1></h1>
+                  <script src="https://code.jquery.com/jquery-2.1.0.js"></script>
+<script>
+var canvas=document.getElementById("canvas")
+var ctx=canvas.getContext("2d")
+var block=[]
+var blockUp=[]
+var background=new Image();
+background.src="http://uploadfile.1pintu.com/2012/1206/20121206101702448.jpg"
+var backgroundwin=new Image();
+backgroundwin.src="http://img1.lvyou114.com/member/2470/photo/2006-6-23-21-19-40.jpg"
+
+
+
+var Block=function(){
+	this.x=400
+	this.y=350
+}
+Block.prototype.draw=function(fillRect){
+  if(fillRect){
+	ctx.fillRect(this.x,this.y,5,5)}
+  else{ctx.strokeRect(this.x,this.y,5,5)}
+}
+Block.prototype.move=function(){
+	this.x-=5
+}
+
+var distanceOut=330
+var distanceIn=290
+
+var upBlock=function(){
+  this.x=400
+  this.y=50
+}
+upBlock.prototype.draw=function(fillRect){
+  if(fillRect){
+  ctx.fillRect(this.x,this.y,5,5)}
+  else{ctx.strokeRect(this.x,this.y,5,5)}
+}
+upBlock.prototype.move=function(){
+  this.x-=5
+}
+
+var k=1
+var gameoverDraw=function(color){
+  ctx.font = "60px Courier"
+  ctx.fillStyle = color
+  ctx.textAlign = "center"
+  ctx.textBaseline = "middle"
+  ctx.fillText("Game Over",200,200)
+}
+var gameover=function(){
+  clearInterval(intervalId)
+  var shiningUp=setInterval(function(){
+    ctx.drawImage(background,0,0,400,400)
+    ctx.font = "20px Courier"
+    ctx.fillStyle = "White"
+    ctx.textAlign = "left"
+    ctx.textBaseline = "top"
+    ctx.fillText("score: " +score, 15, 15)
+    if(Math.floor(k/2)<k/2){gameoverDraw("Black")}
+    else{gameoverDraw("White")}
+    k++
+  },80)
+}
+var judge=function(){
+  for(l=0;l<i;l++){
+  if(yy-10<blockUp[l].y+5 && blockUp[l].x<xx && xx<blockUp[l].x+5){
+    gameover()
+  }
+  else if(yy+10>block[l].y && block[l].x<xx && xx<block[l].x+5){
+    gameover()
+  }
+  }
+}
+
+var score=0
+var drawScore=function(){
+  ctx.font = "20px Courier"
+  ctx.fillStyle = "Black"
+  ctx.textAlign = "left"
+  ctx.textBaseline = "top"
+  ctx.fillText("score: " +score, 15, 15)
+}
+var setLevel=setInterval(function(event){
+  distanceOut=distanceOut-50
+  distanceIn=distanceIn-50
+  if(distanceIn===40){clearInterval(setLevel)}
+},1500)
+
+
+
+var random=function(number){
+  number=number+Math.floor(Math.random()*4)*3-4
+  if (number>395){number=395}
+  else if(number<0){number=0}
+  return number
+}
+var limit=function(up,down){
+  if(down-up>distanceOut){up=up+2;down=down-2}
+  else if(down-up<distanceIn){up=up-2;down=down+2}
+  var heights=[up,down]
+  return heights
+}
+
+
+$("#canvas").mousemove(function(e){
+  xx=e.pageX
+  yy=e.pageY
+  return  
+})
+
+var i=0
+var o=0
+var height=350
+var heightUp=50
+var n=0
+while (n<5){
+  var win=prompt("Set your goal.(Minimum 500 scores)")
+  if(win<500){alert("Your goal is too low!")}
+    else{break}
+  n++
+}
+
+if(win>1000){$("h1").append("You are heaven-daring.   ")}
+  else if(win<50 || win===null){$("h1").append("You are as timid as a mouse.   ")}
+
+
+
+
+var intervalId=setInterval(function(){
+  if(win===null || win<500){gameover()}
+	ctx.clearRect(0,0,400,400)
+var warning="The ball can't leave the canvas.   "
+if(xx+10>400){xx=390;gameover();$("h1").append(warning)}
+else if(xx-10<0){xx=10;gameover();$("h1").append(warning)}
+if(yy+10>400){yy=390;gameover();$("h1").append(warning)}
+else if(yy-10<0){yy=10;gameover();$("h1").append(warning)}
+  ctx.beginPath()
+  ctx.arc(xx,yy,10,0,Math. PI*2)
+  ctx.stroke()
+  
+  block[i]=new Block()
+  blockUp[i]=new upBlock()
+    block[i].y=height
+    blockUp[i].y=heightUp
+    height=random(height)
+    heightUp=random(heightUp)
+    heights=limit(heightUp,height)
+    heightUp=heights[0]
+    height=heights[1]
+    blockUp[i].draw(false)
+    blockUp[i].draw(false)
+    for(var j=0;j<i;j++){
+      block[j].move()
+      blockUp[j].move()
+      block[j].draw()
+      blockUp[j].draw()
+    }
+  
+  i++;
+  judge()
+  drawScore()
+  score++
+if(score===500){$("h1").append("It's not much to be particular about.   ")}
+else if(score===750){$("h1").append("A bit fierce.   ")}
+else if(score===1000){$("h1").append("Can't be held back.   ")}
+else if(score===2000){$("h1").append("Worship big god!   ")}
+else if(score===10000){$("h1").append("You are GOD!!!   ")}
+
+  ctx.strokeRect(0,0,400,400)
+  if(score>=win && win>=500){
+  clearInterval(intervalId)
+  ctx.clearRect(0,0,400,400)
+  ctx.drawImage(backgroundwin,0,0,400,400)
+  drawScore()
+  ctx.font = "60px Courier"
+  ctx.fillStyle ="White"
+  ctx.textAlign = "center"
+  ctx.textBaseline = "middle"
+  ctx.fillText("You Win!",200,200)
+}
+},40)
+
+
+</script>
+</body>
+</html>
